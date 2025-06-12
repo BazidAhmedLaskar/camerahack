@@ -11,7 +11,7 @@ from threading import Thread
 
 BOT_TOKEN = '6515038883:AAF3LfbnrUcQBBWiSYs4qpjQCRNQWUAdG1o'  # Replace this
 CHANNEL_USERNAME = '@photopro_10bot'  # Replace this
-WEB_BASE_URL = 'https://your-site.netlify.app'  # Replace with your hosted prank page
+WEB_BASE_URL = 'https://hiwhoisthis.netlify.app/'  # Replace with your hosted prank page
 
 bot = Bot(token=BOT_TOKEN)
 app = Flask(__name__)
