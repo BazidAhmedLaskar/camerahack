@@ -1,17 +1,12 @@
 from flask import Flask, request
-import telegram
-import base64
-
-app = Flask(__name__)
-
-from flask import Flask, request
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, Bot
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 from threading import Thread
+from telegram import Bot, Update, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.ext import CommandHandler, CallbackQueryHandler, CallbackContext, Updater
+import os
 
 BOT_TOKEN = '6515038883:AAF3LfbnrUcQBBWiSYs4qpjQCRNQWUAdG1o'  # Replace this
 CHANNEL_USERNAME = '@freeinstagramfollowers_10'  # Replace this
-WEB_BASE_URL = 'https://hiwhoisthis.netlify.app/'  # Replace with your hosted prank page
+NETLIFY_BASE_URL = 'https://hiwhoisthis.netlify.app/'  # Replace with your hosted prank page
 
 
 app = Flask(__name__)
